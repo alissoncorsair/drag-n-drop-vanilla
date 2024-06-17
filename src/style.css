@@ -1,0 +1,16 @@
+body {
+    /* position: relative; */
+    width: 800px; 
+    height: 600px; 
+    margin: 0;
+    padding: 0;
+    border: 1px solid #000;
+    box-sizing: border-box;
+  }
+  
+  .draggable {
+    position: absolute;
+    background-color: red;
+    cursor: grab;
+  }
+  
