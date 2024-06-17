@@ -68,11 +68,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  function findClosestNode(draggedNode: Node): Node | null {
+  const findClosestNode = (draggedNode: Node): Node | null => {
     const draggedRect = draggedNode.element.getBoundingClientRect();
-    let minDistance = Number.MAX_SAFE_INTEGER; // Initialize with a large number
+    let minDistance = Number.MAX_SAFE_INTEGER; // initialize with a large number
     let closestNode: Node | null = null;
-    const threshold = 100;
+    const threshold = 100; // the maximum distance to snap to a node so we also snap edges
 
     nodes.forEach(node => {
       if (node !== draggedNode) {
@@ -135,6 +135,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const snapToPage = (draggedNode: Node): void => {
+    const bodyWidth = document.body.clientWidth;
+    const bodyHeight = document.body.clientHeight;
     const draggedRect = draggedNode.element.getBoundingClientRect();
 
     const draggedRectLeft = draggedRect.left + window.scrollX;
@@ -142,11 +144,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const draggedRectTop = draggedRect.top + window.scrollY;
     const draggedRectBottom = draggedRect.bottom + window.scrollY;
 
-    // Snap to page edges
+    //if it is outside border, ignore and just return
+    if (draggedRectLeft < 0 || draggedRectRight > bodyWidth || draggedRectTop < 0 || draggedRectBottom > bodyHeight) {
+      return;
+    }
+
     if (Math.abs(draggedRectLeft) < 20) {
       draggedNode.element.style.left = '0px';
-      // 800 is the width of the page
-    } else if (Math.abs(draggedRectRight - 800) < 20) {
+    } else if (Math.abs(draggedRectRight - bodyWidth) < 20) {
       draggedNode.element.style.left = '750px';
     } else if (Math.abs((draggedRectLeft + draggedRectRight) / 2 - 400) < 20) {
       draggedNode.element.style.left = '375px';
@@ -154,7 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (Math.abs(draggedRectTop) < 20) {
       draggedNode.element.style.top = '0px';
-    } else if (Math.abs(draggedRectBottom - 600) < 20) {
+    } else if (Math.abs(draggedRectBottom - bodyHeight) < 20) {
       draggedNode.element.style.top = '550px';
     } else if (Math.abs((draggedRectTop + draggedRectBottom) / 2 - 300) < 20) {
       draggedNode.element.style.top = '275px';
